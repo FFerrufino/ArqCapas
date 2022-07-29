@@ -6,7 +6,7 @@ app.use("/main", express.static(__dirname + "/public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/datos", routerDatos);
+exports.app.use("/api/datos", routerDatos);
 
 const PORT = config.PORT;
 app.listen(8080, () => {
