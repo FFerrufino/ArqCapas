@@ -1,5 +1,5 @@
 const express = require("express");
-const routerDatos = require("./router");
+const routerDatos = require("./router/router");
 const app = express();
 
 app.use("/main", express.static(__dirname + "/public"));
