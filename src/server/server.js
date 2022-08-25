@@ -32,7 +32,6 @@ app.set("view engine", ".hbs");
 app.set("views", "../srcHtml/views");
 
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.json());
 
 app.use(cookieParser());
 app.use(
@@ -45,9 +44,6 @@ app.use(
 );
 
 app.use(routerDatos);
-app.get("/lawea", (req, res) => {
-  res.render("login");
-});
 
 const PORT = config.PORT;
 app.listen(8080, () => {

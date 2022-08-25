@@ -31,16 +31,7 @@ async function createHash(password) {
 }
 
 async function verificaPass(usuario, password) {
-  const saltRounds = 10;
-  // console.log("old pass hash: ", usuario);
   try {
-    // const salt = await bcrypt.genSalt(saltRounds);
-    // const hash = await bcrypt.hash(password, salt);
-    const lawea = await createHash(password);
-
-    // console.log("new pass hash: ", lawea);
-    console.log("kimo", usuario, password);
-
     return await bcrypt.compare(password, usuario);
   } catch (error) {
     console.log(error);
