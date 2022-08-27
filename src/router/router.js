@@ -7,10 +7,10 @@ const {
   register,
   logged,
   logout,
-  info,
   randoms,
   newUser,
   auth,
+  chat,
   loginPost,
   registerPost,
 } = require("../service/service");
@@ -28,6 +28,7 @@ routerDatos.get("/logout", logout);
 routerDatos.get("/api/randoms/:max", randoms);
 routerDatos.get("/newUser", newUser);
 routerDatos.get("/auth-bloq", auth);
+routerDatos.get("/chat", chat);
 
 routerDatos.post("/login", loginPost);
 routerDatos.post("/register", registerPost);

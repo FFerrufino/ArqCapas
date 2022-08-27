@@ -7,12 +7,24 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const connectMongo = require("connect-mongo");
 const bodyParser = require("body-parser");
+const path = require("path");
 
 const app = express();
 
-app.use("/main", express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, "../srcHtml/views")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Chat
+
+const socketIO = require("socket.io");
+const http = require("http");
+let server = http.createServer(app);
+
+module.exports.io = socketIO(server);
+require("./socket");
+
+// Conexión a la BD
 
 const MongoStore = connectMongo.create({
   mongoUrl:
@@ -20,6 +32,7 @@ const MongoStore = connectMongo.create({
   ttl: 600,
 });
 
+// Motor de plantillas
 app.engine(
   ".hbs",
   exphbs.engine({
@@ -30,6 +43,8 @@ app.engine(
 );
 app.set("view engine", ".hbs");
 app.set("views", "../srcHtml/views");
+
+// Session
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -46,6 +61,6 @@ app.use(
 app.use(routerDatos);
 
 const PORT = config.PORT;
-app.listen(8080, () => {
+server.listen(8080, () => {
   console.log(`Servidor express escuchando en el puerto ${PORT}`);
 });

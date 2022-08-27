@@ -1,20 +1,17 @@
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-const connectMongo = require("connect-mongo");
-const bodyParser = require("body-parser");
-const exphbs = require("express-handlebars");
-const path = require("path");
 const bcrypt = require("bcrypt");
 const User = require("../daos/models/user");
 const contenedorMongoose = require("../daos/mongoCont");
 const { fork } = require("child_process");
 const crypto = require("crypto");
+const path = require("path");
 const createTransport = require("nodemailer");
 // const twilio = require("twilio");
 
 const passport = require("passport");
 const { Strategy } = require("passport-local");
 const LocalStrategy = Strategy;
+
+// const { io } = require("../server/server");
 
 //Bcrypt
 async function createHash(password) {
@@ -47,8 +44,6 @@ passport.use(
     const existeUsuario = coll.find((usuario) => {
       return usuario.username == username;
     });
-    const hola = await verificaPass(existeUsuario.password, password);
-    console.log("console de hola " + hola);
 
     if (!existeUsuario) {
       console.log("Usuario no encontrado");
@@ -76,6 +71,24 @@ passport.deserializeUser(async (nombre, done) => {
   // console.log(usuario);
   done(null, usuario);
 });
+
+// Chat
+
+// const messages = [
+//   { author: "Juan", text: "¡Hola! ¿Que tal?" },
+//   { author: "Pedro", text: "¡Muy bien! ¿Y vos?" },
+//   { author: "Ana", text: "¡Genial!" },
+// ];
+
+// io.on("connection", function (socket) {
+//   console.log("Un cliente se ha conectado");
+//   socket.emit("messages", messages);
+
+//   socket.on("new-message", (data) => {
+//     messages.push(data);
+//     io.sockets.emit("messages", messages);
+//   });
+// });
 
 // Rutas
 async function main(req, res) {
@@ -126,6 +139,17 @@ async function logout(req, res) {
   res.redirect("/");
 }
 
+// async function chat(req, res) {
+//   // console.log(`${__dirname}../public/chat.html`);
+//   // res.render("chat");
+//   res.sendFile(path.join(__dirname, "../public/chat.html"));
+// }
+
+async function chat(req, res) {
+  // console.log(`${__dirname}../public/chat.html`);
+  // console.log(req.session.passport.user.username);
+  res.render("chat", { datos: req.session.passport.user.username });
+}
 async function randoms(req, res) {
   const ran = fork("child.js");
 
@@ -264,6 +288,7 @@ module.exports = {
   randoms,
   newUser,
   auth,
+  chat,
   loginPost,
   registerPost,
 };
