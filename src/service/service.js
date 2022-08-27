@@ -11,8 +11,6 @@ const passport = require("passport");
 const { Strategy } = require("passport-local");
 const LocalStrategy = Strategy;
 
-// const { io } = require("../server/server");
-
 //Bcrypt
 async function createHash(password) {
   console.log("pass sin encriptar " + password);
@@ -72,35 +70,21 @@ passport.deserializeUser(async (nombre, done) => {
   done(null, usuario);
 });
 
-// Chat
-
-// const messages = [
-//   { author: "Juan", text: "¡Hola! ¿Que tal?" },
-//   { author: "Pedro", text: "¡Muy bien! ¿Y vos?" },
-//   { author: "Ana", text: "¡Genial!" },
-// ];
-
-// io.on("connection", function (socket) {
-//   console.log("Un cliente se ha conectado");
-//   socket.emit("messages", messages);
-
-//   socket.on("new-message", (data) => {
-//     messages.push(data);
-//     io.sockets.emit("messages", messages);
-//   });
-// });
-
 // Rutas
 async function main(req, res) {
-  if (req.session.username) {
-    res.redirect("/datos");
-  } else {
+  if (req.session.passport == undefined) {
     res.redirect("/login");
+  } else {
+    res.redirect("/logged");
   }
 }
 
 async function login(req, res) {
-  res.render("login");
+  if (req.session.passport == undefined) {
+    res.render("login");
+  } else {
+    res.redirect("/logged");
+  }
 }
 
 async function loginError(req, res) {
@@ -111,20 +95,26 @@ async function register(req, res) {
   res.render("register");
 }
 async function logged(req, res) {
-  // console.log("logged req.user: ", req.session);
-  console.log("logged req.user: ", req.session.passport.user);
-  console.log(req.session.passport);
-  const datosUsuario = {
-    nombre: req.session.passport.user.username,
-    direccion: req.session.passport.user.email,
-    admin: req.session.passport.user.admin,
-  };
-  if (req.session.passport.user.admin == false) {
-    res.render("logged", { datos: datosUsuario });
+  // console.log(req.session.passport == undefined);
+  // console.log(req.session.passport);
+  if (req.session.passport == undefined) {
+    res.redirect("/");
   } else {
-    res.render("admin");
+    const datosUsuario = {
+      nombre: req.session.passport.user.username,
+      direccion: req.session.passport.user.email,
+      admin: req.session.passport.user.admin,
+    };
+    if (req.session.passport.user.admin == false) {
+      res.render("logged", { datos: datosUsuario });
+    } else {
+      res.render("admin");
+    }
   }
-  console.log(datosUsuario);
+  // if (!req.session.passport.user)
+  // console.log("logged req.user: ", req.session);
+  // console.log("logged req.user: ", req.session.passport.user);
+  // console.log(req.session.passport);
 }
 
 async function logout(req, res) {
@@ -139,16 +129,12 @@ async function logout(req, res) {
   res.redirect("/");
 }
 
-// async function chat(req, res) {
-//   // console.log(`${__dirname}../public/chat.html`);
-//   // res.render("chat");
-//   res.sendFile(path.join(__dirname, "../public/chat.html"));
-// }
-
 async function chat(req, res) {
-  // console.log(`${__dirname}../public/chat.html`);
-  // console.log(req.session.passport.user.username);
-  res.render("chat", { datos: req.session.passport.user.username });
+  if (req.session.passport == undefined) {
+    res.redirect("/login");
+  } else {
+    res.render("chat", { datos: req.session.passport.user.username });
+  }
 }
 async function randoms(req, res) {
   const ran = fork("child.js");
@@ -228,54 +214,30 @@ async function registerPost(req, res) {
     res.redirect("/login");
   }
 
-  // const MailAdmin = "...";
+  const MailAdmin = "...";
 
-  // const transporter = createTransport({
-  //   service: "gmail",
-  //   port: 587,
-  //   auth: {
-  //     user: MailAdmin,
-  //     pass: "",
-  //   },
-  // });
+  const transporter = createTransport({
+    service: "gmail",
+    port: 587,
+    auth: {
+      user: MailAdmin,
+      pass: "",
+    },
+  });
 
-  // const mailOptions = {
-  //   from: "Servidor Node.js",
-  //   to: req.body.email,
-  //   subject: "Nuevo usuario",
-  //   html: [req.doby.username, req.body.email, req.body.number],
-  //   attachments: [
-  //     {
-  //       path: "58F.jpg",
-  //     },
-  //   ],
-  // };
+  const mailOptions = {
+    from: "Servidor Node.js",
+    to: req.body.email,
+    subject: "Nuevo usuario",
+    html: [req.body.username, req.body.email, req.body.number],
+  };
 
-  // try {
-  //   const info = await transporter.sendMail(mailOptions);
-  //   console.log(info);
-  // } catch (error) {
-  //   console.log(error);
-  // }
-  // const accountSid = "AC1fa832d3b34023d1f65e7b29b1ec0651";
-  // const authToken = "0e42fe04ac8d86727f1ebe330d977ab7";
-  // const client = require("twilio")(accountSid, authToken);
-
-  // client.messages
-  //   .create({
-  //     body: [req.doby.username, req.body.email, req.body.number],
-  //     from: "whatsapp:+14155238886",
-  //     to: "whatsapp:+5493517883201",
-  //   })
-  //   .then((message) => console.log(message.sid))
-  //   .done();
-
-  // const options = {
-  //   body: [req.doby.username, req.body.email, req.body.number],
-  //   mediaUrl: [],
-  //   from: "whatsapp:+14155238886",
-  //   to: "whatsapp:+5493517883201",
-  // };
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(info);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports = {
