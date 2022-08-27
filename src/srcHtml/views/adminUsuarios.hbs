@@ -16,20 +16,25 @@
       chat</button>
     <button
       class="btn btn-danger my-5"
-      onclick="location.href='/adminUsuarios'"
-    >Administrar usuarios</button>
+      onclick="location.href='/logged'"
+    >Volver</button>
     <br />
     <br />
-    <h2>Productos</h2>
+    <h2>usuarios</h2>
 
     <ul>
-      {{#each prods}}
-        <img src="{{this.url}}" alt="" />
-        <li>{{this.name}}</li>
-        <button
-          class="btn btn-danger my-5"
-          onclick="location.href='/deleteProd/{{this.id}}'"
-        >Borrar este producto</button>
+      {{#each users}}
+        {{!-- <img src="{{this.url}}" alt="" /> --}}
+        <li>
+          Usuario:
+          {{this.name}}
+          Mail:
+          {{this.mail}}
+          <button
+            class="btn btn-danger my-5"
+            onclick="location.href='/deleteUser/{{this.id}}'"
+          >Borrar este producto</button>
+        </li>
       {{/each}}
     </ul>
   </div>

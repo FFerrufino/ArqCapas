@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../daos/models/user");
+const Prods = require("../daos/models/prods");
 const contenedorMongoose = require("../daos/mongoCont");
 const { fork } = require("child_process");
 const crypto = require("crypto");
@@ -9,6 +10,7 @@ const createTransport = require("nodemailer");
 
 const passport = require("passport");
 const { Strategy } = require("passport-local");
+const user = require("../daos/models/user");
 const LocalStrategy = Strategy;
 
 //Bcrypt
@@ -85,6 +87,10 @@ async function login(req, res) {
   } else {
     res.redirect("/logged");
   }
+  // const bd = new contenedorMongoose(Prods);
+  // bd.create({ name: "hola", img: "ho", description: "la" });
+  // let coll = await bd.read().then();
+  // console.log(coll);
 }
 
 async function loginError(req, res) {
@@ -95,6 +101,14 @@ async function register(req, res) {
   res.render("register");
 }
 async function logged(req, res) {
+  const bd = new contenedorMongoose(Prods);
+  let coll = await bd.read().then();
+  let collname = [];
+
+  coll.map((e) => {
+    collname.push({ name: e.name, id: e._id, url: e.img });
+  });
+  console.log(collname);
   // console.log(req.session.passport == undefined);
   // console.log(req.session.passport);
   if (req.session.passport == undefined) {
@@ -105,10 +119,11 @@ async function logged(req, res) {
       direccion: req.session.passport.user.email,
       admin: req.session.passport.user.admin,
     };
+
     if (req.session.passport.user.admin == false) {
-      res.render("logged", { datos: datosUsuario });
+      res.render("logged", { datos: datosUsuario, prods: collname });
     } else {
-      res.render("admin");
+      res.render("admin", { datos: datosUsuario, prods: collname });
     }
   }
   // if (!req.session.passport.user)
@@ -117,6 +132,22 @@ async function logged(req, res) {
   // console.log(req.session.passport);
 }
 
+async function adminUsers(req, res) {
+  const bd = new contenedorMongoose(User);
+  let coll = await bd.read().then();
+  // console.log(coll);
+  let collname = [];
+
+  coll.map((e) => {
+    collname.push({ name: e.username, id: e._id, mail: e.email });
+  });
+  console.log(collname);
+  if (req.session.passport.user.admin == false) {
+    res.redirect("/logged");
+  } else {
+    res.render("adminUsuarios", { users: collname });
+  }
+}
 async function logout(req, res) {
   console.log("logout" + req.session);
   req.session.destroy((err) => {
@@ -146,6 +177,15 @@ async function randoms(req, res) {
       res.send(msg);
     }
   });
+}
+
+async function deleteProd(req, res) {
+  const bd = new contenedorMongoose(Prods);
+  bd.delete(req.params._id);
+}
+async function deleteUser(req, res) {
+  const bd = new contenedorMongoose(Prods);
+  bd.delete(req.params._id);
 }
 
 const users = {};
@@ -241,6 +281,9 @@ async function registerPost(req, res) {
 }
 
 module.exports = {
+  adminUsers,
+  deleteProd,
+  deleteUser,
   main,
   login,
   loginError,

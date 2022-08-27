@@ -1,5 +1,5 @@
 <div class="container text-center my-3">
-  <div class="jumbotron" style="background-color: green;color: white;">
+  <div class="jumbotron" style="background-color: rgb(94, 231, 94): white;">
     <h1>USER OK LOGIN!</h1>
     <h2><i>Bienvenido {{datos.nombre}}</i></h2>
     <br />
@@ -12,6 +12,15 @@
       class="btn btn-danger my-5"
       onclick="location.href='/logout'"
     >LOGOUT</button>
+
+    <h2>Productos</h2>
+
+    <ul>
+      {{#each prods}}
+        <img src="{{this.url}}" alt="" />
+        <li>{{this.name}}</li>
+      {{/each}}
+    </ul>
 
   </div>
 </div>
