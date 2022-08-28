@@ -249,3 +249,20 @@ $(function () {
     log("Intento de reconexión fallido");
   });
 });
+async function borrarProd(e) {
+  console.log(e);
+  await fetch(`http://localhost:8080/deleteProd/` + e, {
+    method: "DELETE",
+  })
+    .then((res) => res.text())
+    .then((res) => console.log(res));
+}
+
+async function borrarUser(e) {
+  console.log(e);
+  await fetch(`http://localhost:8080/deleteUser/` + e, {
+    method: "DELETE",
+  })
+    .then((res) => res.text())
+    .then((res) => console.log(res));
+}

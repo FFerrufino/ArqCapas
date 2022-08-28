@@ -77,10 +77,7 @@
         </li>
         <img src="{{this.url}}" alt="" />
 
-        <button
-          class="btn btn-danger my-5"
-          onclick="location.href='/deleteProd/{{this.id}}'"
-        >Borrar este producto</button>
+        <button onclick="borrarProd('{{this.id}}')">Borrar este producto</button>
         <br />
       {{/each}}
     </ul>

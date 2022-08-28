@@ -159,7 +159,7 @@ async function deleteProd(req, res) {
   bd.delete(req.params._id);
 }
 async function deleteUser(req, res) {
-  const bd = new contenedorMongoose(Prods);
+  const bd = new contenedorMongoose(User);
   bd.delete(req.params._id);
 }
 async function createProd(req, res) {
@@ -266,9 +266,7 @@ module.exports = {
   register,
   logged,
   logout,
-  randoms,
   newUser,
-  auth,
   chat,
   loginPost,
   registerPost,

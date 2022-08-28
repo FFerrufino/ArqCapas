@@ -30,10 +30,9 @@
           {{this.name}}
           Mail:
           {{this.mail}}
-          <button
-            class="btn btn-danger my-5"
-            onclick="location.href='/deleteUser/{{this.id}}'"
-          >Borrar este producto</button>
+          <br />
+          <button onclick="borrarUser('{{this.id}}')">Borrar este usuario</button>
+
         </li>
       {{/each}}
     </ul>

@@ -10,9 +10,7 @@ const {
   register,
   logged,
   logout,
-  randoms,
   newUser,
-  auth,
   chat,
   loginPost,
   registerPost,
@@ -30,9 +28,7 @@ routerDatos.get("/loginError", loginError);
 routerDatos.get("/register", register);
 routerDatos.get("/logged", logged);
 routerDatos.get("/logout", logout);
-routerDatos.get("/api/randoms/:max", randoms);
 routerDatos.get("/newUser", newUser);
-routerDatos.get("/auth-bloq", auth);
 routerDatos.get("/chat", chat);
 routerDatos.get("/adminUsuarios", adminUsers);
 
@@ -41,7 +37,7 @@ routerDatos.post("/login", loginPost);
 routerDatos.post("/register", registerPost);
 routerDatos.post("/pedido/:prod", pedido);
 
-routerDatos.get("/deleteUser/:_id", deleteUser);
-routerDatos.get("/deleteProd/:_id", deleteProd);
+routerDatos.delete("/deleteUser/:_id", deleteUser);
+routerDatos.delete("/deleteProd/:_id", deleteProd);
 
 module.exports = routerDatos;
