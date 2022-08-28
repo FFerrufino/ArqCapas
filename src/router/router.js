@@ -1,6 +1,8 @@
 const { Router } = require("express");
 const compression = require("express");
 const {
+  createProd,
+  pedido,
   adminUsers,
   main,
   login,
@@ -34,8 +36,10 @@ routerDatos.get("/auth-bloq", auth);
 routerDatos.get("/chat", chat);
 routerDatos.get("/adminUsuarios", adminUsers);
 
+routerDatos.post("/createProd", createProd);
 routerDatos.post("/login", loginPost);
 routerDatos.post("/register", registerPost);
+routerDatos.post("/pedido/:prod", pedido);
 
 routerDatos.get("/deleteUser/:_id", deleteUser);
 routerDatos.get("/deleteProd/:_id", deleteProd);

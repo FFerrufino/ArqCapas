@@ -17,8 +17,13 @@
 
     <ul>
       {{#each prods}}
-        <img src="{{this.url}}" alt="" />
         <li>{{this.name}}</li>
+        <img src="{{this.url}}" alt="" />
+        <form action="/pedido/{{this.name}}" method="post">
+          <button type="submit" name="upvote" value="Upvote">
+            Pedir este producto</button>
+        </form>
+        <br />
       {{/each}}
     </ul>
 

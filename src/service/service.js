@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../daos/models/user");
 const Prods = require("../daos/models/prods");
+const Pedido = require("../daos/models/pedidos");
 const contenedorMongoose = require("../daos/mongoCont");
 const { fork } = require("child_process");
 const crypto = require("crypto");
@@ -15,7 +16,6 @@ const LocalStrategy = Strategy;
 
 //Bcrypt
 async function createHash(password) {
-  console.log("pass sin encriptar " + password);
   const saltRounds = 10;
 
   try {
@@ -60,7 +60,6 @@ passport.use(
 );
 
 passport.serializeUser((usuario, done) => {
-  // console.log(usuario);
   done(null, usuario);
 });
 
@@ -68,7 +67,7 @@ passport.deserializeUser(async (nombre, done) => {
   const bd = new contenedorMongoose(User);
   let coll = await bd.read().then();
   const usuario = coll.find((usuario) => usuario.username == nombre);
-  // console.log(usuario);
+
   done(null, usuario);
 });
 
@@ -87,10 +86,6 @@ async function login(req, res) {
   } else {
     res.redirect("/logged");
   }
-  // const bd = new contenedorMongoose(Prods);
-  // bd.create({ name: "hola", img: "ho", description: "la" });
-  // let coll = await bd.read().then();
-  // console.log(coll);
 }
 
 async function loginError(req, res) {
@@ -108,9 +103,7 @@ async function logged(req, res) {
   coll.map((e) => {
     collname.push({ name: e.name, id: e._id, url: e.img });
   });
-  console.log(collname);
-  // console.log(req.session.passport == undefined);
-  // console.log(req.session.passport);
+
   if (req.session.passport == undefined) {
     res.redirect("/");
   } else {
@@ -126,22 +119,17 @@ async function logged(req, res) {
       res.render("admin", { datos: datosUsuario, prods: collname });
     }
   }
-  // if (!req.session.passport.user)
-  // console.log("logged req.user: ", req.session);
-  // console.log("logged req.user: ", req.session.passport.user);
-  // console.log(req.session.passport);
 }
 
 async function adminUsers(req, res) {
   const bd = new contenedorMongoose(User);
   let coll = await bd.read().then();
-  // console.log(coll);
+
   let collname = [];
 
   coll.map((e) => {
     collname.push({ name: e.username, id: e._id, mail: e.email });
   });
-  console.log(collname);
   if (req.session.passport.user.admin == false) {
     res.redirect("/logged");
   } else {
@@ -149,13 +137,11 @@ async function adminUsers(req, res) {
   }
 }
 async function logout(req, res) {
-  console.log("logout" + req.session);
   req.session.destroy((err) => {
     if (err) {
       return res.json({ status: "logout ERROR", body: err });
     }
   });
-  console.log("logout2" + req.session);
 
   res.redirect("/");
 }
@@ -167,17 +153,6 @@ async function chat(req, res) {
     res.render("chat", { datos: req.session.passport.user.username });
   }
 }
-async function randoms(req, res) {
-  const ran = fork("child.js");
-
-  ran.on("message", (msg) => {
-    if (msg == "listo") {
-      ran.send(req.params.max);
-    } else {
-      res.send(msg);
-    }
-  });
-}
 
 async function deleteProd(req, res) {
   const bd = new contenedorMongoose(Prods);
@@ -186,6 +161,26 @@ async function deleteProd(req, res) {
 async function deleteUser(req, res) {
   const bd = new contenedorMongoose(Prods);
   bd.delete(req.params._id);
+}
+async function createProd(req, res) {
+  const bd = new contenedorMongoose(Prods);
+
+  let newProd = {};
+  newProd.name = req.body.name;
+  newProd.img = req.body.img;
+  newProd.description = req.body.description;
+
+  bd.create(newProd);
+}
+async function pedido(req, res) {
+  const bd = new contenedorMongoose(Pedido);
+  let newProd = {};
+  newProd.username = req.session.passport.user.username;
+  newProd.email = req.session.passport.user.email;
+  newProd.number = req.session.passport.user.number;
+  newProd.pedido = req.params.prod;
+
+  bd.create(newProd);
 }
 
 const users = {};
@@ -206,27 +201,6 @@ async function newUser(req, res) {
   users[username] = { salt, hash };
   console.log("Success");
   res.sendStatus(200);
-}
-async function auth(req, res) {
-  let username = req.query.username || "";
-  const password = req.query.password || "";
-
-  username = username.replace(/[!@#$%^&*]/g, "");
-
-  if (!username || !password || !users[username]) {
-    process.exit(1);
-    return res.sendStatus(400);
-  }
-
-  const { salt, hash } = users[username];
-  const encryptHash = crypto.pbkdf2Sync(password, salt, 10000, 512, "sha512");
-
-  if (crypto.timingSafeEqual(hash, encryptHash)) {
-    res.sendStatus(200);
-  } else {
-    process.exit(1);
-    res.sendStatus(401);
-  }
 }
 
 let loginPost = passport.authenticate("local", {
@@ -281,6 +255,8 @@ async function registerPost(req, res) {
 }
 
 module.exports = {
+  createProd,
+  pedido,
   adminUsers,
   deleteProd,
   deleteUser,
