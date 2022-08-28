@@ -3,11 +3,8 @@ const User = require("../daos/models/user");
 const Prods = require("../daos/models/prods");
 const Pedido = require("../daos/models/pedidos");
 const contenedorMongoose = require("../daos/mongoCont");
-const { fork } = require("child_process");
 const crypto = require("crypto");
-const path = require("path");
 const createTransport = require("nodemailer");
-// const twilio = require("twilio");
 
 const passport = require("passport");
 const { Strategy } = require("passport-local");
