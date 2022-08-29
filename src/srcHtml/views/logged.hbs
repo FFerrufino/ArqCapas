@@ -1,6 +1,5 @@
 <div class="container text-center my-3">
   <div class="jumbotron" style="background-color: rgb(94, 231, 94): white;">
-    <h1>USER OK LOGIN!</h1>
     <h2><i>Bienvenido {{datos.nombre}}</i></h2>
     <br />
     <h3>dirección: {{datos.direccion}}</h3>
@@ -17,7 +16,10 @@
 
     <ul>
       {{#each prods}}
-        <li>{{this.name}}</li>
+        <li>{{this.name}}
+          <br />
+          {{this.description}}
+        </li>
         <img src="{{this.url}}" alt="" />
         <form action="/pedido/{{this.name}}" method="post">
           <button type="submit" name="upvote" value="Upvote">

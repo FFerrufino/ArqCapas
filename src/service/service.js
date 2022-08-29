@@ -98,8 +98,14 @@ async function logged(req, res) {
   let collname = [];
 
   coll.map((e) => {
-    collname.push({ name: e.name, id: e._id, url: e.img });
+    collname.push({
+      name: e.name,
+      id: e._id,
+      url: e.img,
+      description: e.description,
+    });
   });
+  console.log(collname);
 
   if (req.session.passport == undefined) {
     res.redirect("/");
@@ -237,9 +243,9 @@ async function registerPost(req, res) {
   });
 
   const mailOptions = {
-    from: "Servidor Node.js",
+    from: MailAdmin,
     to: req.body.email,
-    subject: "Nuevo usuario",
+    subject: "Te has registrado en E-commerce Ferru",
     html: [req.body.username, req.body.email, req.body.number],
   };
 

@@ -3,7 +3,6 @@
     class="jumbotron"
     style="background-color: rgb(94, 231, 94);color: white;"
   >
-    <h1>Admin OK LOGIN!</h1>
     <h2><i>Bienvenido admin</i></h2>
     <br />
     {{!-- <h3>dirección: {{datos.direccion}}</h3>
@@ -74,6 +73,8 @@
     <ul>
       {{#each prods}}
         <li>{{this.name}}
+          <br />
+          {{this.description}}
         </li>
         <img src="{{this.url}}" alt="" />
 

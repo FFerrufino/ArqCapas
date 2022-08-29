@@ -27,8 +27,7 @@ require("./socket");
 // Conexión a la BD
 
 const MongoStore = connectMongo.create({
-  mongoUrl:
-    "mongodb+srv://ferru:ferru2647@cluster0.lpvnv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  mongoUrl: config.KEY,
   ttl: 600,
 });
 
@@ -61,6 +60,6 @@ app.use(
 app.use(routerDatos);
 
 const PORT = config.PORT;
-server.listen(8080, () => {
+server.listen(PORT, () => {
   console.log(`Servidor express escuchando en el puerto ${PORT}`);
 });
